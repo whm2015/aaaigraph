@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*- -
 from sklearn.metrics import confusion_matrix  # 生成混淆矩阵函数
 import sys
+import random
 import matplotlib.pyplot as plt  # 绘图库
 import numpy as np
 import matplotlib.cm as cm
@@ -340,7 +341,8 @@ def tanh(x):
 
 
 def beta():
-    all_beta = np.load(r'C:\Users\isaac\Desktop\12-29实验\2_class_combine_glad_lambda50\results2\2\beta700.npy')
+    this_number = 9
+    all_beta = np.load(os.path.join(r'C:\Users\isaac\Desktop\新参数\10', str(this_number), 'beta700.npy'))
     print(all_beta.shape)
     for index, i in enumerate(all_beta):
         if np.isnan(i).any():
@@ -349,15 +351,18 @@ def beta():
     else:
         no_index = all_beta.shape[0] - 1
     print(no_index)
-    all_beta = all_beta[no_index].reshape(4999)
+    all_beta = all_beta[no_index].reshape(all_beta.shape[1])
     print(max(all_beta), min(all_beta))
-    plt.hist(all_beta, bins=np.arange(-1, 12, 0.2))
+    print(all_beta)
+    plt.hist(all_beta, bins=np.arange(-1, 501, 5))
     plt.title("histogram")
-    plt.show()
+    plt.savefig(os.path.join(r'C:\Users\isaac\Desktop\新参数分布图\10', str(this_number) + 'b' + str(no_index) + '.png'), format='png')
+    plt.close()
 
 
 def alpha():
-    all_alpha = np.load(r'C:\Users\isaac\Desktop\12-29实验\2_class_combine_glad_lambda50\results2\2\all_worker_alpha.npy')
+    this_number = 6
+    all_alpha = np.load(os.path.join(r'C:\Users\isaac\Desktop\新参数\10', str(this_number), 'all_worker_alpha.npy'))
     print(all_alpha.shape)
     for index, i in enumerate(all_alpha):
         if np.isnan(i).any():
@@ -366,10 +371,53 @@ def alpha():
     else:
         no_index = all_alpha.shape[0] - 1
     print(no_index)
-    all_alpha = all_alpha[no_index]
+    all_alpha = np.tanh(all_alpha[no_index])
     print(max(all_alpha), min(all_alpha))
-    plt.hist(all_alpha, bins=np.arange(-2, 10, 0.2))
-    plt.show()
+    plt.hist(all_alpha, bins=np.arange(-1, 1, 0.02))
+    plt.savefig(os.path.join(r'C:\Users\isaac\Desktop\新参数分布图\10', str(this_number) + 'a' + str(no_index) + '.png'), format='png')
+    plt.close()
+
+
+def betaflow():
+    all_beta = np.load(r'C:\Users\isaac\Desktop\新参数\10\6\beta700.npy')
+    print(all_beta.shape)
+    print(all_beta.max(), all_beta.min())
+    nan_index = [np.isnan(x).any() for x in all_beta]
+    if True in nan_index:
+        no_index = nan_index.index(True) - 1
+    else:
+        no_index = -1
+    print(no_index)
+    all_beta = all_beta.reshape(1001, 700).transpose(1, 0)
+    print(all_beta.shape)
+    for i in range(50):
+        this_index = random.randint(0, 700)
+        print(this_index)
+        plt.ylim(-1, 550)
+        plt.plot(range(1001), all_beta[this_index])
+        plt.savefig(os.path.join(r'C:\Users\isaac\Desktop\test', str(this_index) + '.png'), format='png')
+        plt.close()
+
+
+def alphaflow():
+    all_alpha = np.load(r'C:\Users\isaac\Desktop\10分类2w轮\5\all_worker_alpha.npy')
+    print(all_alpha.shape)
+    print(np.nanmax(all_alpha), np.nanmin(all_alpha))
+    nan_index = [np.isnan(x).any() for x in all_alpha]
+    if True in nan_index:
+        no_index = nan_index.index(True) - 1
+    else:
+        no_index = -1
+    print(no_index)
+    all_alpha = all_alpha.transpose(1, 0)
+    print(all_alpha.shape)
+    for i in range(44):
+        this_index = i
+        print(this_index)
+        plt.ylim(-2, 11)
+        plt.plot(range(20001), all_alpha[this_index])
+        plt.savefig(os.path.join(r'C:\Users\isaac\Desktop\1w\10_2w_alphaflow\5', str(this_index) + '.jpg'), format='png')
+        plt.close()
 
 
 def tete():
@@ -1144,4 +1192,4 @@ def 做题最多的6个人10分类():
 
 
 if __name__ == '__main__':
-    做题最多的6个人10分类()
+    做题最多的6个人2分类()
