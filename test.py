@@ -7,6 +7,7 @@ import matplotlib.cm as cm
 import pandas as pd
 from scipy.stats import pearsonr
 import os
+from IPython import embed
 
 
 def plot_confusion_matrix(ma, labels_name, title):
@@ -23,36 +24,55 @@ def plot_confusion_matrix(ma, labels_name, title):
 
 def compare_conf_mats_2(class_num, true_mat, weights, crowd_worker, wid, wn, wr, w_alpha):
     # normalize weights matrix between 0 and 1
-    plt.figure(figsize=(22, 9))
+    plt.figure(figsize=(22, 13))
     for i in range(len(true_mat)):
         w2_mat, w3_mat = None, None
-        for j in range(2):
-            plt.subplot2grid((2, 6), (j, i))
+        for j in range(3):
+            ax = plt.subplot2grid((3, 6), (j, i))
             if j == 0:
                 w1_mat = true_mat[i] / true_mat[i].sum(axis=1).reshape((class_num, 1))
-                plt.imshow(w1_mat.transpose(1, 0), interpolation='nearest', cmap=cm.Blues)
-                plt.title('Real', size=34)
+                plt.imshow(w1_mat.transpose(1, 0), interpolation='nearest', cmap=cm.Blues, vmin=0, vmax=1)
+                print(w1_mat)
+                plt.title('Real', size=32)
                 plt.xticks(fontsize=28)
                 plt.yticks(fontsize=28)
+                # center: 0.495, 0.5
+                ax.text(0.002, 0.002, round(w1_mat[0][0], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.988, 0.002, round(w1_mat[1][0], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.002, 0.998, round(w1_mat[0][1], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.988, 0.998, round(w1_mat[1][1], 2), va="center", ha="center", size=30, color='k')
             elif j == 1:
-                w2_mat = weights[i]
-                plt.imshow(w2_mat, interpolation='nearest', cmap=cm.Blues)
-                plt.title('Estimated', size=34)
+                w2_mat = weights[i].transpose(1, 0)
+                plt.imshow(w2_mat, interpolation='nearest', cmap=cm.Blues, vmin=0, vmax=1)
+                plt.title('SpeeLFC', size=32)
                 plt.xticks(fontsize=28)
                 plt.yticks(fontsize=28)
                 this_title = 'ID:{}'.format(wid[i])
                 plt.figtext(1 / 12 * (2 * i + 1), 0.95, this_title, va="center", ha="center", size=36)
                 this_title = 'R:{}, L:{}'.format(wr[i], round(np.trace(w2_mat) / class_num, 2))
-                # plt.figtext(1 / 12 * (2 * i + 1), 0.89, this_title, va="center", ha="center", size=36)
+                ax.text(0.002, 0.002, round(w2_mat[0][0], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.988, 0.002, round(w2_mat[1][0], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.002, 0.998, round(w2_mat[0][1], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.988, 0.998, round(w2_mat[1][1], 2), va="center", ha="center", size=30, color='k')
             else:
-                # w3_mat = crowd_worker[i]
-                # plt.imshow(w3_mat, interpolation='nearest', cmap=cm.Blues)
-                # plt.title('Crowd', size=34)
-                # plt.xticks(fontsize=28)
-                # plt.yticks(fontsize=28)
-                pass
+                w3_mat = crowd_worker[i]
+                plt.imshow([[0, 0], [0, 0]], interpolation='nearest', cmap=cm.Blues, vmin=0, vmax=1)
+                plt.title('Crowd-Layer', size=32)
+                plt.xticks(fontsize=28)
+                plt.yticks(fontsize=28)
+                ax.set_xticks(np.arange(-0.5, 2, 1), minor=True)
+                ax.set_yticks(np.arange(-0.5, 2, 1), minor=True)
+                ax.tick_params(axis='x', which='minor', length=0)
+                ax.tick_params(axis='x', which='minor', length=0)
+                ax.grid(which='minor')
+                ax.text(0.002, 0.002, round(w3_mat[0][0], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.988, 0.002, round(w3_mat[0][1], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.002, 0.998, round(w3_mat[1][0], 2), va="center", ha="center", size=30, color='k')
+                ax.text(0.988, 0.998, round(w3_mat[1][1], 2), va="center", ha="center", size=30, color='k')
+                ax.yaxis.grid(True, which='minor')
             plt.xticks(range(class_num), range(1, class_num + 1))
             plt.yticks(range(class_num), range(1, class_num + 1))
+            plt.grid(True, which='minor')
     plt.subplots_adjust(left=0.02, bottom=0.02, top=0.9, right=0.99, wspace=0.3, hspace=0.1)
 
     plt.savefig('{}.pdf'.format('2_workers'), format='pdf')
@@ -69,13 +89,13 @@ def compare_conf_mats_10(class_num, true_mat, weights, learn_worker_shuang, wid,
             if j == 0:
                 w1_mat = true_mat[i] / true_mat[i].sum(axis=1).reshape((class_num, 1))
                 plt.imshow(w1_mat.transpose(1, 0), interpolation='nearest', cmap=cm.Blues)
-                plt.title('Real confusion matrix', size=18)
+                plt.title('Real transition matrix', size=18)
                 plt.xticks(fontsize=16)
                 plt.yticks(fontsize=16)
             elif j == 1:
                 w2_mat = weights[i]
                 plt.imshow(w2_mat, interpolation='nearest', cmap=cm.Blues)
-                plt.title('Estimated with SpeeLFC', size=18)
+                plt.title('Estimated by SpeeLFC', size=18)
                 plt.xticks(fontsize=16)
                 plt.yticks(fontsize=16)
                 this_title = 'ID:{}'.format(wid[i])
@@ -89,7 +109,7 @@ def compare_conf_mats_10(class_num, true_mat, weights, learn_worker_shuang, wid,
             plt.yticks(range(class_num), range(1, class_num + 1))
     plt.subplots_adjust(left=0.02, bottom=0.03, top=0.91, right=0.98, wspace=0.2, hspace=0.15)
 
-    plt.savefig('{}.pdf'.format('2_workers'), format='pdf')
+    plt.savefig('{}.pdf'.format('10_workers'), format='pdf')
     # plt.show()
 
 
@@ -171,7 +191,7 @@ def test():
 
 
 def worker_dis():
-    w_acc = np.load('C:\\Users\\isaac\\Desktop\\worker_acc_2.npy')[()]
+    w_acc = np.load('D:\\aaai\\worker_acc_2.npy')[()]
     print(w_acc)
     acc = [x[0] for x in w_acc.values()]
     number = [x[1] for x in w_acc.values()]
@@ -215,7 +235,7 @@ def worker_dis():
     plt.title('(b)', fontsize=20)
     plt.grid(b=False)
 
-    w_acc = np.load('C:\\Users\\isaac\\Desktop\\worker_acc.npy')[()]
+    w_acc = np.load('D:\\aaai\\worker_acc.npy')[()]
     print(w_acc)
     acc = [x[0] for x in w_acc.values()]
     number = [x[1] for x in w_acc.values()]
@@ -256,10 +276,10 @@ def worker_dis():
     plt.title('(b)', fontsize=20)
     plt.grid(b=False)
 
-    plt.figtext(0.285, 0.96, "Sentiment polarity dataset", va="center", ha="center", size=20)
-    plt.figtext(0.795, 0.96, "Music genre dataset", va="center", ha="center", size=20)
+    plt.figtext(0.28, 0.96, "SPC dataset", va="center", ha="center", size=20)
+    plt.figtext(0.8, 0.96, "MGC dataset", va="center", ha="center", size=20)
 
-    # plt.subplots_adjust(left=0.01, bottom=0.01, top=0.99, right=0.99, hspace=0.2)
+    plt.subplots_adjust(left=0.01, bottom=0.01, top=0.99, right=0.99, hspace=0.2)
     plt.savefig('{}.pdf'.format(1010), format='pdf')
     plt.show()
 
@@ -1033,8 +1053,8 @@ def sandian():
 
     plt.figtext(0.26, 0.525, '(a) Model: SpeeLFC; Dataset: SPC', va="center", ha="center", size=18)
     plt.figtext(0.77, 0.525, '(b) Model: SpeeLFC-D; Dataset: SPC', va="center", ha="center", size=18)
-    plt.figtext(0.26, 0.02, '(c) Model: SpeeLFC; Dataset: MCG', va="center", ha="center", size=18)
-    plt.figtext(0.77, 0.02, '(d) Model: SpeeLFC-D; Dataset: MCG', va="center", ha="center", size=18)
+    plt.figtext(0.26, 0.02, '(c) Model: SpeeLFC; Dataset: MGC', va="center", ha="center", size=18)
+    plt.figtext(0.77, 0.02, '(d) Model: SpeeLFC-D; Dataset: MGC', va="center", ha="center", size=18)
     plt.subplots_adjust(left=0.08, bottom=0.1, top=0.99, right=0.97, hspace=0.3, wspace=0.3)
     plt.savefig('somt.pdf', format='pdf')
 
@@ -1055,6 +1075,7 @@ def 做题最多的6个人2分类():
         chose_id.append(workers.index(i[0]))
         if index == 5:
             break
+    print(chose_id)
     real_worker = []
     learn_worker = []
     crowd_worker = []
@@ -1073,8 +1094,9 @@ def 做题最多的6个人2分类():
         for j in zero_index:
             this_true[j] = [1, ] * worker_number
         temp_y = c_w[:, :, wid]
-        temp_y = temp_y + np.abs(c_w.min())
-        crowd_worker.append(temp_y / temp_y.sum(axis=0))
+        # temp_y = temp_y + np.abs(c_w.min())
+        # crowd_worker.append(temp_y / temp_y.sum(axis=0))
+        crowd_worker.append(temp_y)
         real_worker.append(this_true)
         learn_worker.append(w_2[wid])
         wn.append(w_acc[wname][1])
