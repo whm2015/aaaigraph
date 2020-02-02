@@ -12,6 +12,7 @@ from IPython import embed
 
 
 def plot_confusion_matrix(ma, labels_name, title):
+    ''' 画混淆矩阵 '''
     ma = ma.astype('float') / ma.sum(axis=1)[:, np.newaxis]  # 归一化
     plt.imshow(ma, interpolation='nearest', cmap=cm.Blues)  # 在特定的窗口上显示图像
     plt.title(title)  # 图像标题
@@ -24,6 +25,7 @@ def plot_confusion_matrix(ma, labels_name, title):
 
 
 def compare_conf_mats_2(class_num, true_mat, weights, crowd_worker, wid, wn, wr, w_alpha):
+    ''' 2分类混淆矩阵对比图 '''
     # normalize weights matrix between 0 and 1
     plt.figure(figsize=(22, 13))
     for i in range(len(true_mat)):
@@ -81,6 +83,7 @@ def compare_conf_mats_2(class_num, true_mat, weights, crowd_worker, wid, wn, wr,
 
 
 def compare_conf_mats_10(class_num, true_mat, weights, learn_worker_shuang, wid, wn, wr, w_alpha):
+    ''' 10分类混淆矩阵对比图 '''
     # normalize weights matrix between 0 and 1
     plt.figure(figsize=(22, 8))
     for i in range(len(true_mat)):
@@ -115,6 +118,7 @@ def compare_conf_mats_10(class_num, true_mat, weights, learn_worker_shuang, wid,
 
 
 def main():
+    ''' 处理数据，作为画混淆矩阵对比图的输入 '''
     w_1 = np.load('D:\\aaai\\worker_hun_2.npy')
     w_2 = np.load('D:\\aaai\\2分类出图\\ds\\all_worker_l1.npy')[-1]
     # w_3 = np.load('C:\\Users\\isaac\\Desktop\\10分类出图\\shuang\\all_worker_l1.npy')[-1]
@@ -179,6 +183,7 @@ def main():
 
 
 def test():
+    ''' 查看工人答题数量、acc排序情况 '''
     w_acc = np.load('C:\\Users\\isaac\\Desktop\\worker_acc.npy')[()]
     print(w_acc)
     times = []
@@ -192,6 +197,7 @@ def test():
 
 
 def worker_dis():
+    ''' 工人答题情况分布，箱型图 '''
     w_acc = np.load('D:\\aaai\\worker_acc_2.npy')[()]
     print(w_acc)
     acc = [x[0] for x in w_acc.values()]
@@ -286,6 +292,7 @@ def worker_dis():
 
 
 def acc_graph():
+    ''' acc曲线 '''
     train = np.load('C:\\Users\\isaac\\Desktop\\diff_10\\0\\all_train_acc.npy')
     test = np.load('C:\\Users\\isaac\\Desktop\\diff_10\\0\\all_test_acc.npy')
     # train2 = np.load('C:\\Users\\isaac\\Desktop\\maxmigtest\\128\\agg_acc.npy')
@@ -307,6 +314,7 @@ def acc_graph():
 
 
 def worker_ds_graph():
+    ''' 选1个工人画出该工人混淆矩阵对角线10个数的变化情况 '''
     np.set_printoptions(precision=2)
     color = ['k', 'k', 'y', 'g', 'c', 'b', 'm', 'r', 'y', 'g']
     worker = np.load('C:\\Users\\isaac\\Desktop\\results_test\\121\\all_worker_l1.npy')
@@ -337,10 +345,12 @@ def worker_ds_graph():
 
 
 def tanh(x):
+    ''' tanh函数 '''
     return (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
 
 
 def beta():
+    ''' beta分布 '''
     this_number = 9
     all_beta = np.load(os.path.join(r'C:\Users\isaac\Desktop\新参数\10', str(this_number), 'beta700.npy'))
     print(all_beta.shape)
@@ -361,6 +371,7 @@ def beta():
 
 
 def alpha():
+    ''' alpha分布 '''
     this_number = 6
     all_alpha = np.load(os.path.join(r'C:\Users\isaac\Desktop\新参数\10', str(this_number), 'all_worker_alpha.npy'))
     print(all_alpha.shape)
@@ -379,6 +390,7 @@ def alpha():
 
 
 def betaflow():
+    ''' 随机选50道题画出他们的beta变化曲线 '''
     all_beta = np.load(r'C:\Users\isaac\Desktop\新参数\10\6\beta700.npy')
     print(all_beta.shape)
     print(all_beta.max(), all_beta.min())
@@ -400,6 +412,7 @@ def betaflow():
 
 
 def alphaflow():
+    ''' 所有44个工人的alpha变化曲线 '''
     all_alpha = np.load(r'C:\Users\isaac\Desktop\10分类2w轮\5\all_worker_alpha.npy')
     print(all_alpha.shape)
     print(np.nanmax(all_alpha), np.nanmin(all_alpha))
@@ -421,6 +434,7 @@ def alphaflow():
 
 
 def tete():
+    ''' 应该是glad的题目难度和工人参数分布 '''
     a = {'country.00005.mp3': 3.407106277536768, 'blues.00015.mp3': 0.4906219628730461,
          'jazz.00042.mp3': 0.4906219628730461, 'reggae.00056.mp3': 3.4103497596979655,
          'jazz.00071.mp3': 3.4103497596979655, 'classical.00024.mp3': 3.4103497596979655,
@@ -801,6 +815,7 @@ def tete():
 
 
 def acc_row():
+    ''' 某次实验的acc曲线 '''
     c = []
     d = []
     path = 'C:\\Users\\isaac\\Desktop\\testglad'
@@ -824,6 +839,7 @@ def acc_row():
 
 
 def check_worker_10():
+    ''' 查看工人混淆矩阵 '''
     w_1 = np.load('C:\\Users\\isaac\\Desktop\\worker_hun.npy')
     b = []
     for index, i in enumerate(w_1):
@@ -834,6 +850,7 @@ def check_worker_10():
 
 
 def pear():
+    ''' 对比混淆矩阵、alpha、工人准确率之间的相关系数 '''
     w_2 = np.load(r'D:\aaai\10分类出图\ds\all_worker_l1.npy')[-1]
     w_acc = np.load(r'D:\aaai\worker_acc.npy')[()]
     w_alpha = np.load(r'C:\Users\isaac\Desktop\all_worker_alpha.npy')[-1]
@@ -868,6 +885,7 @@ def pear():
 
 
 def simple():
+    ''' acc曲线 '''
     """less是轮数少的意思"""
     x1 = range(2001)
     y1 = np.load('D:\\aaai\\2_class_glad_less\\0\\all_train_acc.npy')[()]
@@ -930,25 +948,31 @@ def timedraw10():
 
 
 def func3(x):
+    ''' 用于拟合曲线 '''
     return -3.002 * x * x * x + 5.389 * x * x - 1.658 * x + 0.3572
 
 
 def func2_qian(x):
+    ''' 用于拟合曲线 '''
     return -1.227 * x * x * x + 1.411 * x * x + 1.177 * x - 0.2852
 
 
 def func2_tanh(x):
+    ''' 用于拟合曲线 '''
     return (np.tanh((x - 0.81) * 20) + 1.05) / 2
 
 def func10_qian(x):
+    ''' 用于拟合曲线 '''
     return 1.067 * x - 0.01234
 
 
 def func10_tanh(x):
+    ''' 用于拟合曲线 '''
     return (np.tanh((x - 0.74) * 20) * 1.14 + 0.89) / 2
 
 
 def sandian():
+    ''' 最后撤掉的那四张小图，工人混淆矩阵、工人alpha和准确率相关性 '''
     w_2 = np.load('D:\\aaai\\12-30\\2c\\ds\\results1\\1\\all_worker_l1.npy')
     has_nan = [np.isnan(x).any() for x in w_2]
     if True in has_nan:
@@ -1108,6 +1132,7 @@ def sandian():
 
 
 def 做题最多的6个人2分类():
+    ''' 混淆矩阵对比图 '''
     w_1 = np.load('D:\\aaai\\worker_hun_2.npy')
     w_2 = np.load('D:\\aaai\\12-30\\2c\\ds\\results1\\1\\all_worker_l1.npy')[-1]
     w_acc = np.load('D:\\aaai\\worker_acc_2.npy')[()]
@@ -1153,6 +1178,7 @@ def 做题最多的6个人2分类():
 
 
 def 做题最多的6个人10分类():
+    ''' 混淆矩阵对比图 '''
     w_1 = np.load('D:\\aaai\\worker_hun.npy')
     w_2 = np.load('D:\\aaai\\12-30\\10c\\ds\\results1\\1\\all_worker_l1.npy')[-1]
     w_acc = np.load('D:\\aaai\\worker_acc.npy')[()]
